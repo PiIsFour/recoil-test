@@ -9,5 +9,14 @@
 		"ghcr.io/devcontainers-contrib/features/pnpm:2": {
 			"version": "latest"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"Orta.vscode-twoslash-queries"
+			]
+		}
 	}
 }

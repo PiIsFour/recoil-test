@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "app1"
+		}
+	],
+	"settings": {
+		"git.openRepositoryInParentFolders": "always"
+	}
+}

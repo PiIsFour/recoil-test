@@ -4,5 +4,10 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-  "remoteUser": "node"
+	"remoteUser": "node",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/pnpm:2": {
+			"version": "latest"
+		}
+	}
 }

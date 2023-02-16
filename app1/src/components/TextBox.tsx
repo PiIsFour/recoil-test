@@ -19,7 +19,8 @@ export const TextBox = ({ id }: Props) => {
 	const dispatch = useDispatch()
 
 	return <input
-		value={field?.data}
+		value={field.data}
 		onChange={e => dispatch(updateFieldData(id, e.target.value))}
+		disabled={!field.enabled}
 	></input>
 }

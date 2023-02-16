@@ -12,6 +12,7 @@ importers:
       '@types/node': ^16.18.12
       '@types/react': ^18.0.28
       '@types/react-dom': ^18.0.10
+      knockout: ^3.5.1
       react: ^18.2.0
       react-dom: ^18.2.0
       react-redux: ^8.0.5
@@ -27,6 +28,7 @@ importers:
       '@types/node': 16.18.12
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.10
+      knockout: 3.5.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.5_ffd5foczrxyy7gyjqbwgwcqlbq
@@ -6581,6 +6583,10 @@ packages:
   /klona/2.0.6:
     resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
     engines: {node: '>= 8'}
+    dev: false
+
+  /knockout/3.5.1:
+    resolution: {integrity: sha512-wRJ9I4az0QcsH7A4v4l0enUpkS++MBx0BnL/68KaLzJg7x1qmbjSlwEoCNol7KTYZ+pmtI7Eh2J0Nu6/2Z5J/Q==}
     dev: false
 
   /language-subtag-registry/0.3.22:

@@ -15,7 +15,8 @@
 			"extensions": [
 				"mhutchie.git-graph",
 				"eamodio.gitlens",
-				"Orta.vscode-twoslash-queries"
+				"Orta.vscode-twoslash-queries",
+				"Gruntfuggly.todo-tree"
 			]
 		}
 	}

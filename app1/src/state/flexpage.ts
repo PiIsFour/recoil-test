@@ -1,10 +1,7 @@
 import type { AnyAction } from "@reduxjs/toolkit"
-import { UpdateFieldData } from "./fieldActions"
-
-type Field = {
-	id: string,
-	data: string,
-}
+import { UpdateFieldData, UpdateFieldEnabled } from "./fieldActions"
+import CB from '../components/MockComponentCodeBehind'
+import { Field } from "./fieldEntety"
 
 type State = {
 	fields: Field[]
@@ -13,11 +10,14 @@ type State = {
 const initial: State = {
 	fields: [{
 		id: '1',
-		data: 'hello world'
+		data: 'hello world',
+		enabled: true,
 	}]
 }
 
-type Action = UpdateFieldData
+type Action = UpdateFieldData | UpdateFieldEnabled
+
+export const MockComponentLoading = new CB() 
 
 const reducer = (state: State = initial, action: AnyAction): State => {
 	const a = action as Action
@@ -40,6 +40,25 @@ const reducer = (state: State = initial, action: AnyAction): State => {
 				fields
 			}
 		}
+		case "updateFieldEnabled": {
+			const {id, enabled} = a
+
+			const fields = state.fields.map(field => {
+				if(field.id !== id)
+					return field
+				
+				return {
+					...field,
+					enabled,
+				}
+			})
+
+			return {
+				...state,
+				fields
+			}
+		}
+		default: return state
 	}
 	return state
 }

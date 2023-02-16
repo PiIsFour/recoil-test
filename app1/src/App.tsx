@@ -4,15 +4,7 @@ import './App.css';
 import { SimpleCounter } from './components/SimpleCounter';
 import { Counter } from './components/Counter';
 import { store } from './store';
-import { useSelector } from './hooks'
-import { TextBox } from './components/TextBox';
-
-const MockComponent = () => {
-	const fields = useSelector(state => state.flexpage.fields)
-	return <div className='mock-component'>
-		{fields.map(({id, data}) => <TextBox key={id} id={id} />)}
-	</div>
-}
+import { MockComponent } from './components/MockComponent';
 
 function App() {
 	return (

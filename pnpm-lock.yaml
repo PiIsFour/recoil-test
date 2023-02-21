@@ -12,6 +12,7 @@ importers:
       '@types/node': ^16.18.12
       '@types/react': ^18.0.28
       '@types/react-dom': ^18.0.10
+      guid-typescript: ^1.0.9
       knockout: ^3.5.1
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -28,6 +29,7 @@ importers:
       '@types/node': 16.18.12
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.10
+      guid-typescript: 1.0.9
       knockout: 3.5.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -5277,6 +5279,10 @@ packages:
 
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
+    dev: false
+
+  /guid-typescript/1.0.9:
+    resolution: {integrity: sha512-Y8T4vYhEfwJOTbouREvG+3XDsjr8E3kIr7uf+JZ0BYloFsttiHU0WfvANVsR7TxNUJa/WpCnw/Ino/p+DeBhBQ==}
     dev: false
 
   /gzip-size/6.0.0:

@@ -1,10 +1,12 @@
+import { Guid } from "guid-typescript"
+
 export type UpdateFieldData = {
 	type: 'updateFieldData',
-	id: string,
+	id: Guid,
 	data: string,
 }
 
-export const updateFieldData = (id: string, data: string): UpdateFieldData => {
+export const updateFieldData = (id: Guid, data: string): UpdateFieldData => {
 	return {
 		type: 'updateFieldData',
 		id,
@@ -14,11 +16,11 @@ export const updateFieldData = (id: string, data: string): UpdateFieldData => {
 
 export type UpdateFieldEnabled = {
 	type: 'updateFieldEnabled',
-	id: string,
+	id: Guid,
 	enabled: boolean,
 }
 
-export const updateFieldEnabled = (id: string, enabled: boolean): UpdateFieldEnabled => {
+export const updateFieldEnabled = (id: Guid, enabled: boolean): UpdateFieldEnabled => {
 	return {
 		type: 'updateFieldEnabled',
 		id,

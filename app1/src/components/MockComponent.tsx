@@ -5,6 +5,6 @@ export const MockComponent = () => {
 	const fields = useSelector(state => state.flexpage.fields)
 
 	return <div className='mock-component'>
-		{fields.map(({id, data}) => <TextBox key={id} id={id} />)}
+		{fields.map(({id}) => <TextBox key={id.toString()} id={id} />)}
 	</div>
 }

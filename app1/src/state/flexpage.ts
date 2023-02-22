@@ -1,8 +1,8 @@
 import type { AnyAction } from "@reduxjs/toolkit"
-import { UpdateFieldData, UpdateFieldEnabled } from "./fieldActions"
 import { FieldEntity, FieldRepo, FieldState } from "./entities/field"
 import { Guid } from "guid-typescript"
 import { DataContextEntity, DataContextRepo, DataContextState } from "./entities/dataContext"
+import { reducer as actionsReducer } from './actions'
 
 export type State = {
 	fields: FieldState[]
@@ -10,7 +10,7 @@ export type State = {
 }
 
 const data = {
-	id: Guid.create(),
+	id: Guid.raw(),
 	data: {
 		name: 'hello'
 	}
@@ -18,7 +18,7 @@ const data = {
 
 const initial: State = {
 	fields: [{
-		id: Guid.create(),
+		id: Guid.raw(),
 		dataContext: data.id,
 		enabled: true
 	}],
@@ -29,9 +29,9 @@ interface DataContextRepoInternal extends DataContextRepo {
 	update<T>(entity: DataContextEntity<T>): State
 }
 
-const dataContextRepo = (state: State): DataContextRepoInternal => {
+export const dataContextRepo = (state: State): DataContextRepoInternal => {
 	return {
-		getById: <T>(id: Guid) => {
+		getById: <T>(id: string) => {
 			const data = state.dataContexts.find(x => x.id === id)
 			if(!data)
 				throw new Error('could not find dataContext')
@@ -54,13 +54,13 @@ const dataContextRepo = (state: State): DataContextRepoInternal => {
 }
 
 interface FieldRepoInternal extends FieldRepo {
-	update<T>(entity: FieldEntity): State
+	update(entity: FieldEntity): State
 }
 
-const fieldRepo = (state: State): FieldRepoInternal => {
+export const fieldRepo = (state: State): FieldRepoInternal => {
 	return {
 		getById: id => {
-			const fieldState = state.fields.find(x => x.id === id)
+			const fieldState = state.fields.find(x => x.id === id.toString())
 			if(!fieldState)
 				throw new Error('field not found')
 
@@ -89,29 +89,8 @@ const fieldRepo = (state: State): FieldRepoInternal => {
 	}
 }
 
-type Action = UpdateFieldData | UpdateFieldEnabled
-
 const reducer = (state: State = initial, action: AnyAction): State => {
-	const a = action as Action
-	switch(a.type) {
-		case "updateFieldData": {
-			const {id, data} = a
-			const fields = fieldRepo(state)
-			const field = fields.getById(id)
-			const updatedContext = field.setValue(data)
-			const dataContexts = dataContextRepo(state)
-			return dataContexts.update(updatedContext)
-		}
-		case "updateFieldEnabled": {
-			const {id, enabled} = a
-			const fields = fieldRepo(state)
-			const field = fields.getById(id)
-			const updatedField = field.setEnabled(enabled)
-			return fields.update(updatedField)
-		}
-		default: return state
-	}
-	return state
+	return actionsReducer(state, action as any)
 }
 
 export default reducer

@@ -1,11 +1,10 @@
-import { Guid } from "guid-typescript"
 
 export interface DataContextRepo {
-	getById<T>(id: Guid): DataContextEntity<T>
+	getById<T>(id: string): DataContextEntity<T>
 }
 
 export type DataContextState<T> = {
-	readonly id: Guid,
+	readonly id: string,
 	readonly data: T,
 }
 

@@ -1,13 +1,12 @@
-import { Guid } from "guid-typescript"
 import { useDispatch, useSelector } from "../hooks"
-import { updateFieldData } from "../state/fieldActions"
+import { updateFieldData } from "../state/actions/updateFieldData"
 import type { RootState } from "../store"
 
 type Props = {
-	id: Guid
+	id: string
 }
 
-const selectField = (id: Guid) => (state: RootState) => {
+const selectField = (id: string) => (state: RootState) => {
 	const field = state.flexpage.fields.find(x => x.id === id)
 	if(!field)
 		throw new Error(`field with id [${ id }] does not exist`)
@@ -15,7 +14,7 @@ const selectField = (id: Guid) => (state: RootState) => {
 	return field
 }
 
-const selectDataContext = (id: Guid) => (state: RootState) => {
+const selectDataContext = (id: string) => (state: RootState) => {
 	const data = state.flexpage.dataContexts.find(x => x.id === id)
 	if(!data)
 		throw new Error('missing data context')

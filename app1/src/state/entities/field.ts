@@ -1,9 +1,7 @@
-import { Guid } from "guid-typescript"
-import { ComponentEntity } from "./component"
 import { DataContextEntity, DataContextRepo } from "./dataContext"
 
 export interface FieldRepo {
-	getById(id: Guid): FieldEntity
+	getById(id: string): FieldEntity
 }
 
 export type FieldDefinition = {
@@ -13,9 +11,9 @@ export type FieldDefinition = {
 }
 
 export type FieldState = {
-	readonly id: Guid,
+	readonly id: string,
 	readonly enabled: boolean,
-	readonly dataContext: Guid,
+	readonly dataContext: string,
 }
 
 type Props = {

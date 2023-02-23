@@ -2,6 +2,17 @@ import { Flavor } from "./brand";
 
 export type CodeExpression = Flavor<string, 'CodeExpression'>
 
+export const isCodeExpression = (definition: unknown): definition is CodeExpression => {
+	if(typeof definition !== 'string')
+		return false
+	try {
+		parse(definition)
+		return true
+	} catch(e) {
+		return false
+	}
+}
+
 type Parser = (definition: CodeExpression) => {
 	evaluate: (context: unknown) => unknown;
 };
@@ -17,7 +28,7 @@ export const parse: Parser = definition => {
 	const expressionText = `${ before }this.value${ after }`;
 	const insert = parsePipe(inside.trim());
 
-	// eslint-disable-next-line @typescript-eslint/no-implied-eval
+	// eslint-disable-next-line
 	const executeExpression = new Function(`
 		var result = ${ expressionText };
 		return result;

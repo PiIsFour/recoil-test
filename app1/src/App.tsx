@@ -13,6 +13,9 @@ import { testData } from './state/flexpage';
 // add test data
 
 store.dispatch(createdField(Guid.raw() as FieldId, 'name', testData.id))
+store.dispatch(createdField(Guid.raw() as FieldId, 'name', testData.id))
+store.dispatch(createdField(Guid.raw() as FieldId, 'age', testData.id))
+store.dispatch(createdField(Guid.raw() as FieldId, 'titel', testData.id))
 
 
 function App() {

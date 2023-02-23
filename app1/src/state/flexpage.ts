@@ -8,7 +8,9 @@ import type { State } from "./state"
 export const testData = {
 	id: Guid.raw(),
 	data: {
-		name: 'hello'
+		name: 'hello',
+		age: '42',
+		titel: 'test',
 	}
 } satisfies DataContextState<unknown>
 
@@ -21,6 +23,16 @@ const initial: State = {
 				name: 'name',
 				enabled: true,
 				field: 'name',
+			},
+			'age': {
+				name: 'age',
+				enabled: "{{ $fields.name.value }} === 'hello'",
+				field: 'age',
+			},
+			'titel': {
+				name: 'titel',
+				enabled: "!{{ $fields.age.enabled }}",
+				field: 'titel',
 			}
 		}
 	},
@@ -40,9 +52,9 @@ export const dataContextRepo = (state: State): DataContextRepoInternal => {
 			return new DataContextEntity<T>(data as DataContextState<T>)
 		},
 		update: <T>(entity: DataContextEntity<T>) => {
-			const dataContexts = state.dataContexts.map(x => {
-				if(x.id !== entity.id)
-					return x
+			const dataContexts = state.dataContexts.map(d => {
+				if(d.id !== entity.id)
+					return d
 
 				return entity.state
 			})
@@ -62,7 +74,21 @@ interface FieldRepoInternal extends FieldRepo {
 export const fieldRepo = (state: State): FieldRepoInternal => {
 	return {
 		getById: id => {
-			const fieldState = state.fields.find(x => x.id === id.toString())
+			const fieldState = state.fields.find(f => f.id === id.toString())
+			if(!fieldState)
+				throw new Error('field not found')
+			
+			const definition = state.pageDefinition.fields[fieldState.definition]
+			if(!definition)
+				throw new Error('field definition not found')
+
+			return new FieldEntity({
+				state: fieldState,
+				definition,
+			})
+		},
+		getByName: name => {
+			const fieldState = state.fields.find(f => f.definition === name)
 			if(!fieldState)
 				throw new Error('field not found')
 			
@@ -76,9 +102,9 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 			})
 		},
 		update: entity => {
-			const fields = state.fields.map(x => {
-				if(x.id === entity.id)
-					return x
+			const fields = state.fields.map(f => {
+				if(f.id === entity.id)
+					return f
 				
 				return entity.state
 			})
@@ -95,6 +121,40 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 			}
 		}
 	}
+}
+
+export const createContext = (state: State) => {
+	const context: unknown = {
+		'$fields': new Proxy(state, {
+			has: (state, fieldName) => {
+				if(typeof fieldName !== 'string')
+					return false
+				try {
+					const fields = fieldRepo(state)
+					fields.getByName(fieldName)
+					return true
+				} catch(e) {
+					return false
+				}
+			},
+			get: (state, fieldName) => {
+				if(typeof fieldName !== 'string')
+					return false
+				const fields = fieldRepo(state)
+				const field = fields.getByName(fieldName)
+				const contexts = dataContextRepo(state)
+				return {
+					get value() {
+						return field.getValue(contexts)
+					},
+					get enabled() {
+						return field.getEnabled(context)
+					}
+				}
+			}
+		}) as unknown
+	}
+	return context
 }
 
 const reducer = (state: State = initial, action: AnyAction): State => {

@@ -1,9 +1,10 @@
 import { Brand, Flavor } from "../../helpers/brand"
-import { CodeExpression } from "../../helpers/parser"
+import { CodeExpression, isCodeExpression, parse } from "../../helpers/parser"
 import { DataContextEntity, DataContextRepo } from "./dataContext"
 
 export interface FieldRepo {
 	getById(id: FieldId): FieldEntity
+	getByName(name: FieldDefinitionName): FieldEntity
 }
 
 export type FieldDefinition = {
@@ -54,10 +55,21 @@ export class FieldEntity{
 		return newDataContext
 	}
 
-	get enabled(): boolean{
-		return this.state.enabled
+	getEnabled(context: unknown): boolean{
+		if(!isCodeExpression(this.definition.enabled))
+			return this.state.enabled
+		
+		const expression = parse(this.definition.enabled)
+		const value = expression.evaluate(context)
+		if(typeof value !== 'boolean')
+			throw new Error('could not evaluate to boolean')
+
+		return value
 	}
 	setEnabled(enabled: boolean): FieldEntity{
+		if(isCodeExpression(this.definition.enabled))
+			throw new Error('enabled is bound with a code expression, you can not set it')
+
 		return new FieldEntity({
 			state: {
 				...this.state,
@@ -73,11 +85,13 @@ export const createFieldEntity = ({id, definition, dataContext}: {
 	definition: FieldDefinition,
 	dataContext: string,
 }) => {
+	const enabled = isCodeExpression(definition.enabled) ? true : definition.enabled
+
 	return new FieldEntity({
 		state: {
 			id,
 			definition: definition.name,
-			enabled: true,
+			enabled,
 			dataContext,
 		},
 		definition,

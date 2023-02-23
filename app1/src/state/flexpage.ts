@@ -1,15 +1,11 @@
 import type { AnyAction } from "@reduxjs/toolkit"
-import { FieldEntity, FieldRepo, FieldState } from "./entities/field"
+import { FieldEntity, FieldRepo } from "./entities/field"
 import { Guid } from "guid-typescript"
 import { DataContextEntity, DataContextRepo, DataContextState } from "./entities/dataContext"
 import { reducer as actionsReducer } from './actions'
+import type { State } from "./state"
 
-export type State = {
-	fields: FieldState[]
-	dataContexts: DataContextState<unknown>[]
-}
-
-const data = {
+export const testData = {
 	id: Guid.raw(),
 	data: {
 		name: 'hello'
@@ -17,12 +13,17 @@ const data = {
 } satisfies DataContextState<unknown>
 
 const initial: State = {
-	fields: [{
-		id: Guid.raw(),
-		dataContext: data.id,
-		enabled: true
-	}],
-	dataContexts: [data]
+	fields: [],
+	dataContexts: [testData],
+	pageDefinition: {
+		fields: {
+			'name': {
+				name: 'name',
+				enabled: true,
+				field: 'name',
+			}
+		}
+	},
 }
 
 interface DataContextRepoInternal extends DataContextRepo {
@@ -55,6 +56,7 @@ export const dataContextRepo = (state: State): DataContextRepoInternal => {
 
 interface FieldRepoInternal extends FieldRepo {
 	update(entity: FieldEntity): State
+	create(entity: FieldEntity): State
 }
 
 export const fieldRepo = (state: State): FieldRepoInternal => {
@@ -63,15 +65,14 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 			const fieldState = state.fields.find(x => x.id === id.toString())
 			if(!fieldState)
 				throw new Error('field not found')
+			
+			const definition = state.pageDefinition.fields[fieldState.definition]
+			if(!definition)
+				throw new Error('field definition not found')
 
 			return new FieldEntity({
 				state: fieldState,
-				definition: {
-					name: 'name',
-					enabled: true,
-					field: 'name',
-				},
-				dataContextRepo: dataContextRepo(state)
+				definition,
 			})
 		},
 		update: entity => {
@@ -81,6 +82,13 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 				
 				return entity.state
 			})
+			return {
+				...state,
+				fields
+			}
+		},
+		create: entity => {
+			const fields = [...state.fields, entity.state]
 			return {
 				...state,
 				fields

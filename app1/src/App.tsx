@@ -5,6 +5,15 @@ import { SimpleCounter } from './components/SimpleCounter';
 import { Counter } from './components/Counter';
 import { store } from './store';
 import { MockComponent } from './components/MockComponent';
+import { createdField } from './state/actions/createdField';
+import { Guid } from 'guid-typescript';
+import { FieldId } from './state/entities/field';
+import { testData } from './state/flexpage';
+
+// add test data
+
+store.dispatch(createdField(Guid.raw() as FieldId, 'name', testData.id))
+
 
 function App() {
 	return (

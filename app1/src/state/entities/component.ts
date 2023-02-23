@@ -1,5 +1,5 @@
 import { DataContextRepo } from "./dataContext"
-import { FieldDefinition, FieldEntity, FieldRepo } from "./field"
+import { FieldDefinition, FieldEntity, FieldId, FieldRepo } from "./field"
 
 export type ComponentDefinition = {
 	data: unknown
@@ -9,7 +9,7 @@ export type ComponentDefinition = {
 export type ComponentState = {
 	readonly id: string,
 	readonly data: Record<string, unknown>,
-	readonly fields: string[]
+	readonly fields: FieldId[]
 }
 
 type Props = {

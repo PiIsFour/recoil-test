@@ -1,19 +1,23 @@
-import { State } from "../flexpage";
-import { updateFieldData, UpdateFieldData, updateFieldDataReducer } from "./updateFieldData";
-import { UpdateFieldEnabled, updateFieldEnabled, updateFieldEnabledReducer } from "./updateFieldEnabled";
+import type { State } from "../state";
+import { createdField, CreatedField, createdFieldReducer } from "./createdField";
+import { updatedFieldData, UpdatedFieldData, updatedFieldDataReducer } from "./updatedFieldData";
+import { UpdatedFieldEnabled, updatedFieldEnabled, updatedFieldEnabledReducer } from "./updatedFieldEnabled";
 
 type Actions
-	= UpdateFieldEnabled
-	| UpdateFieldData
+	= UpdatedFieldEnabled
+	| UpdatedFieldData
+	| CreatedField
 
 export const actions = {
-	updateFieldEnabled,
-	updateFieldData,
+	updatedFieldEnabled,
+	updatedFieldData,
+	createdField,
 }
 
 const reducers = {
-	updateFieldEnabled: updateFieldEnabledReducer,
-	updateFieldData: updateFieldDataReducer
+	updatedFieldEnabled: updatedFieldEnabledReducer,
+	updatedFieldData: updatedFieldDataReducer,
+	createdField: createdFieldReducer,
 }
 
 export const reducer = (state: State, action: Actions) => {

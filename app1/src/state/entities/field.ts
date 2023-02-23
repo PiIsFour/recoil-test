@@ -1,52 +1,55 @@
+import { Brand, Flavor } from "../../helpers/brand"
+import { CodeExpression } from "../../helpers/parser"
 import { DataContextEntity, DataContextRepo } from "./dataContext"
 
 export interface FieldRepo {
-	getById(id: string): FieldEntity
+	getById(id: FieldId): FieldEntity
 }
 
 export type FieldDefinition = {
-	readonly name: string,
+	readonly name: FieldDefinitionName,
 	readonly field: string,
-	readonly enabled: boolean
+	readonly enabled: boolean | CodeExpression
 }
 
+export type FieldId = Brand<string, 'FieldId'>
+export type FieldDefinitionName = Flavor<string, 'FieldDefinitionName'>
+
 export type FieldState = {
-	readonly id: string,
+	readonly id: FieldId,
 	readonly enabled: boolean,
 	readonly dataContext: string,
+	readonly definition: FieldDefinitionName,
 }
 
 type Props = {
 	readonly state: FieldState
 	readonly definition: FieldDefinition
-	readonly dataContextRepo: DataContextRepo
 }
 
 export class FieldEntity{
 	public readonly state: FieldState
 	private readonly definition: FieldDefinition
-	private readonly dataContextRepo: DataContextRepo
 
-	constructor({state, definition, dataContextRepo}: Props) {
+	constructor({state, definition}: Props) {
 		this.state = state
 		this.definition = definition
-		this.dataContextRepo = dataContextRepo
 	}
 
 	get id() {
 		return this.state.id
 	}
 
-	get value(): string {
-		const data = this.dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
+	getValue(dataContextRepo: DataContextRepo): string {
+		const data = dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
 		const value = data.getProp(this.definition.field)
 		if(typeof value !== 'string')
 			throw new Error('no field data')
 		
 		return value
 	}
-	setValue(value: string): DataContextEntity<unknown> {
-		const data = this.dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
+	setValue(value: string, dataContextRepo: DataContextRepo): DataContextEntity<unknown> {
+		const data = dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
 		const newDataContext = data.setProp(this.definition.field, value)
 		return newDataContext
 	}
@@ -61,7 +64,22 @@ export class FieldEntity{
 				enabled,
 			},
 			definition: this.definition,
-			dataContextRepo: this.dataContextRepo,
 		})
 	}
+}
+
+export const createFieldEntity = ({id, definition, dataContext}: {
+	id: FieldId,
+	definition: FieldDefinition,
+	dataContext: string,
+}) => {
+	return new FieldEntity({
+		state: {
+			id,
+			definition: definition.name,
+			enabled: true,
+			dataContext,
+		},
+		definition,
+	},)
 }

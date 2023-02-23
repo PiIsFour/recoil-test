@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from "../hooks"
-import { updateFieldData } from "../state/actions/updateFieldData"
+import { updatedFieldData } from "../state/actions/updatedFieldData"
+import { FieldId } from "../state/entities/field"
 import type { RootState } from "../store"
 
 type Props = {
-	id: string
+	id: FieldId
 }
 
-const selectField = (id: string) => (state: RootState) => {
+const selectField = (id: FieldId) => (state: RootState) => {
 	const field = state.flexpage.fields.find(x => x.id === id)
 	if(!field)
 		throw new Error(`field with id [${ id }] does not exist`)
@@ -30,7 +31,7 @@ export const TextBox = ({ id }: Props) => {
 
 	return <input
 		value={value}
-		onChange={e => dispatch(updateFieldData(id, e.target.value))}
+		onChange={e => dispatch(updatedFieldData(id, e.target.value))}
 		disabled={!field.enabled}
 	></input>
 }

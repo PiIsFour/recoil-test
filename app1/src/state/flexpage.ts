@@ -7,33 +7,7 @@ import type { State } from "./state"
 const initial: State = {
 	fields: [],
 	dataContexts: [],
-	pageDefinition: {
-		fields: {
-			'name': {
-				name: 'name',
-				enabled: true,
-				field: 'name',
-			},
-			'age': {
-				name: 'age',
-				enabled: "{{ $fields.name.value }} === 'hello'",
-				field: 'age',
-			},
-			'titel': {
-				name: 'titel',
-				enabled: "!{{ $fields.age.enabled }}",
-				field: 'titel',
-			}
-		},
-		content: {
-			fields: ['name', 'name', 'age', 'titel'],
-			data: {
-				name: 'hello',
-				age: '42',
-				titel: 'test',
-			}
-		}
-	},
+	pageDefinition: undefined,
 }
 
 interface DataContextRepoInternal extends DataContextRepo {
@@ -84,7 +58,7 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 			if(!fieldState)
 				throw new Error('field not found')
 			
-			const definition = state.pageDefinition.fields[fieldState.definition]
+			const definition = state.pageDefinition?.fields[fieldState.definition]
 			if(!definition)
 				throw new Error('field definition not found')
 
@@ -98,7 +72,7 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 			if(!fieldState)
 				throw new Error('field not found')
 			
-			const definition = state.pageDefinition.fields[fieldState.definition]
+			const definition = state.pageDefinition?.fields[fieldState.definition]
 			if(!definition)
 				throw new Error('field definition not found')
 

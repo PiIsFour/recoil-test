@@ -21,7 +21,7 @@ export const createdField = (id: FieldId, definition: FieldDefinitionName, dataC
 
 export const createdFieldReducer = (state: State, {id, definition: definitionName, dataContext}: CreatedField) => {
 	const fields = fieldRepo(state)
-	const definition = state.pageDefinition.fields[definitionName]
+	const definition = state.pageDefinition?.fields[definitionName]
 	if(!definition)
 		throw new Error('field definition not found')
 

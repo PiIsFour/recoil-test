@@ -14,5 +14,5 @@ export type PageDefinition = {
 export type State = {
 	fields: FieldState[];
 	dataContexts: DataContextState[];
-	pageDefinition: PageDefinition;
+	pageDefinition?: PageDefinition;
 };

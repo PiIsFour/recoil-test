@@ -1,6 +1,7 @@
 import type { State } from "../state";
 import { createdDataContext, CreatedDataContext, createdDataContextReducer } from "./createdDataContext";
 import { createdField, CreatedField, createdFieldReducer } from "./createdField";
+import { loadedPageDefinition, LoadedPageDefinition, loadedPageDefinitionReducer } from "./loadedPageDefinition";
 import { updatedFieldData, UpdatedFieldData, updatedFieldDataReducer } from "./updatedFieldData";
 import { UpdatedFieldEnabled, updatedFieldEnabled, updatedFieldEnabledReducer } from "./updatedFieldEnabled";
 
@@ -9,12 +10,14 @@ type Actions
 	| UpdatedFieldData
 	| CreatedField
 	| CreatedDataContext
+	| LoadedPageDefinition
 
 export const actions = {
 	updatedFieldEnabled,
 	updatedFieldData,
 	createdField,
-	createdDataContext
+	createdDataContext,
+	loadedPageDefinition,
 }
 
 const reducers = {
@@ -22,6 +25,7 @@ const reducers = {
 	updatedFieldData: updatedFieldDataReducer,
 	createdField: createdFieldReducer,
 	createdDataContext: createdDataContextReducer,
+	loadedPageDefinition: loadedPageDefinitionReducer,
 }
 
 export const reducer = (state: State, action: Actions) => {

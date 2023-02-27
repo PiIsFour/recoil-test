@@ -1,3 +1,4 @@
+import { DataContextId } from "../entities/dataContext"
 import { createFieldEntity, FieldDefinitionName, FieldId } from "../entities/field"
 import { fieldRepo } from "../flexpage"
 import type { State } from "../state"
@@ -6,10 +7,10 @@ export type CreatedField = {
 	type: 'createdField',
 	id: FieldId,
 	definition: FieldDefinitionName,
-	dataContext: string,
+	dataContext: DataContextId,
 }
 
-export const createdField = (id: FieldId, definition: FieldDefinitionName, dataContext: string): CreatedField => {
+export const createdField = (id: FieldId, definition: FieldDefinitionName, dataContext: DataContextId): CreatedField => {
 	return {
 		type: 'createdField',
 		id,

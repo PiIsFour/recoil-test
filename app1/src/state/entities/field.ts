@@ -1,6 +1,6 @@
 import { Brand, Flavor } from "../../helpers/brand"
 import { CodeExpression, isCodeExpression, parse } from "../../helpers/parser"
-import { DataContextEntity, DataContextRepo } from "./dataContext"
+import { DataContextEntity, DataContextId, DataContextRepo } from "./dataContext"
 
 export interface FieldRepo {
 	getById(id: FieldId): FieldEntity
@@ -19,7 +19,7 @@ export type FieldDefinitionName = Flavor<string, 'FieldDefinitionName'>
 export type FieldState = {
 	readonly id: FieldId,
 	readonly enabled: boolean,
-	readonly dataContext: string,
+	readonly dataContext: DataContextId,
 	readonly definition: FieldDefinitionName,
 }
 
@@ -42,15 +42,15 @@ export class FieldEntity{
 	}
 
 	getValue(dataContextRepo: DataContextRepo): string {
-		const data = dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
+		const data = dataContextRepo.getById(this.state.dataContext)
 		const value = data.getProp(this.definition.field)
 		if(typeof value !== 'string')
 			throw new Error('no field data')
 		
 		return value
 	}
-	setValue(value: string, dataContextRepo: DataContextRepo): DataContextEntity<unknown> {
-		const data = dataContextRepo.getById<Record<string, unknown>>(this.state.dataContext)
+	setValue(value: string, dataContextRepo: DataContextRepo): DataContextEntity {
+		const data = dataContextRepo.getById(this.state.dataContext)
 		const newDataContext = data.setProp(this.definition.field, value)
 		return newDataContext
 	}
@@ -83,7 +83,7 @@ export class FieldEntity{
 export const createFieldEntity = ({id, definition, dataContext}: {
 	id: FieldId,
 	definition: FieldDefinition,
-	dataContext: string,
+	dataContext: DataContextId,
 }) => {
 	const enabled = isCodeExpression(definition.enabled) ? true : definition.enabled
 

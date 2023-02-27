@@ -1,22 +1,12 @@
 import type { AnyAction } from "@reduxjs/toolkit"
 import { FieldEntity, FieldRepo } from "./entities/field"
-import { Guid } from "guid-typescript"
-import { DataContextEntity, DataContextRepo, DataContextState } from "./entities/dataContext"
+import { DataContextEntity, DataContextRepo } from "./entities/dataContext"
 import { reducer as actionsReducer } from './actions'
 import type { State } from "./state"
 
-export const testData = {
-	id: Guid.raw(),
-	data: {
-		name: 'hello',
-		age: '42',
-		titel: 'test',
-	}
-} satisfies DataContextState<unknown>
-
 const initial: State = {
 	fields: [],
-	dataContexts: [testData],
+	dataContexts: [],
 	pageDefinition: {
 		fields: {
 			'name': {
@@ -34,30 +24,46 @@ const initial: State = {
 				enabled: "!{{ $fields.age.enabled }}",
 				field: 'titel',
 			}
+		},
+		content: {
+			fields: ['name', 'name', 'age', 'titel'],
+			data: {
+				name: 'hello',
+				age: '42',
+				titel: 'test',
+			}
 		}
 	},
 }
 
 interface DataContextRepoInternal extends DataContextRepo {
-	update<T>(entity: DataContextEntity<T>): State
+	update(entity: DataContextEntity): State
+	create(entity: DataContextEntity): State
 }
 
 export const dataContextRepo = (state: State): DataContextRepoInternal => {
 	return {
-		getById: <T>(id: string) => {
+		getById: (id: string) => {
 			const data = state.dataContexts.find(x => x.id === id)
 			if(!data)
 				throw new Error('could not find dataContext')
 
-			return new DataContextEntity<T>(data as DataContextState<T>)
+			return new DataContextEntity(data)
 		},
-		update: <T>(entity: DataContextEntity<T>) => {
+		update: (entity: DataContextEntity) => {
 			const dataContexts = state.dataContexts.map(d => {
 				if(d.id !== entity.id)
 					return d
 
 				return entity.state
 			})
+			return {
+				...state,
+				dataContexts
+			}
+		},
+		create: entity => {
+			const dataContexts = [...state.dataContexts, entity.state]
 			return {
 				...state,
 				dataContexts
@@ -119,7 +125,7 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 				...state,
 				fields
 			}
-		}
+		},
 	}
 }
 

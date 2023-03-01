@@ -24,10 +24,15 @@ store.dispatch(createPage({
 			name: 'titel',
 			enabled: "!{{ $fields.age.enabled }}",
 			field: 'titel',
+		},
+		'name2': {
+			name: 'name2',
+			enabled: "{{ $properties.enabled }}",
+			field: 'name',
 		}
 	},
 	content: {
-		fields: ['name', 'name', 'age', 'titel'],
+		fields: ['name', 'name', 'age', 'titel', 'name2'],
 		data: {
 			name: 'hello',
 			age: '42',

@@ -2,9 +2,9 @@ import { useSelector } from '../hooks'
 import { TextBox } from './TextBox';
 
 export const MockComponent = () => {
-	const fields = useSelector(state => state.flexpage.fields)
+	const fieldIds = useSelector(state => state.flexpage.fields.map(({id}) => id))
 
 	return <div className='mock-component'>
-		{fields.map(({id}) => <TextBox key={id.toString()} id={id} />)}
+		{fieldIds.map(id => <TextBox key={id.toString()} id={id} />)}
 	</div>
 }

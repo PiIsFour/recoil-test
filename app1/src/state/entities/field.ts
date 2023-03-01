@@ -1,5 +1,7 @@
 import { Brand, Flavor } from "../../helpers/brand"
 import { CodeExpression, isCodeExpression, parse } from "../../helpers/parser"
+import { updatedFieldEnabled } from "../actions/updatedFieldEnabled"
+import { DependantValue, externalDependency, hasValue, independentValue, isExternalDependency, withinStateDependency } from "../dependantValue"
 import { DataContextEntity, DataContextId, DataContextRepo } from "./dataContext"
 
 export interface FieldRepo {
@@ -18,7 +20,7 @@ export type FieldDefinitionName = Flavor<string, 'FieldDefinitionName'>
 
 export type FieldState = {
 	readonly id: FieldId,
-	readonly enabled: boolean,
+	readonly enabled: DependantValue<boolean>,
 	readonly dataContext: DataContextId,
 	readonly definition: FieldDefinitionName,
 }
@@ -56,9 +58,12 @@ export class FieldEntity{
 	}
 
 	getEnabled(context: unknown): boolean{
+		if(hasValue(this.state.enabled))
+			return this.state.enabled.value
+
 		if(!isCodeExpression(this.definition.enabled))
-			return this.state.enabled
-		
+			throw new Error('Enabled needs to be a definition to get here')
+
 		const expression = parse(this.definition.enabled)
 		const value = expression.evaluate(context)
 		if(typeof value !== 'boolean')
@@ -67,25 +72,60 @@ export class FieldEntity{
 		return value
 	}
 	setEnabled(enabled: boolean): FieldEntity{
-		if(isCodeExpression(this.definition.enabled))
+		if(!hasValue(this.state.enabled))
 			throw new Error('enabled is bound with a code expression, you can not set it')
 
 		return new FieldEntity({
 			state: {
 				...this.state,
-				enabled,
+				enabled: {
+					...this.state.enabled,
+					value: enabled
+				},
 			},
 			definition: this.definition,
 		})
 	}
+
+	getExternalDependencies() {
+		const enabled = this.state.enabled
+		if(!isExternalDependency(enabled))
+			return []
+		
+		return [{
+			definition: enabled,
+			onUpdate: (value: unknown) => {
+				if(typeof value !== 'boolean')
+					throw new Error('codeExpression for field enabled needs to evaluate to boolean')
+				return updatedFieldEnabled(this.state.id, value)
+			}
+		}]
+	}
 }
 
-export const createFieldEntity = ({id, definition, dataContext}: {
+const getInitialValue = <T>(definition: T | CodeExpression, context: unknown): DependantValue<T> => {
+	if(!isCodeExpression(definition))
+		return independentValue(definition)
+	
+	const expression = parse(definition)
+	const hasExternalDependencies = expression
+		.dependencies()
+		.some(path => path.startsWith('$properties.'))
+	
+	if(!hasExternalDependencies)
+		return withinStateDependency(definition)
+
+	const value = expression.evaluate(context) as T
+	return externalDependency(value, definition)
+}
+
+export const createFieldEntity = ({id, definition, dataContext, context}: {
 	id: FieldId,
 	definition: FieldDefinition,
 	dataContext: DataContextId,
+	context: unknown,
 }) => {
-	const enabled = isCodeExpression(definition.enabled) ? true : definition.enabled
+	const enabled = getInitialValue(definition.enabled, context)
 
 	return new FieldEntity({
 		state: {

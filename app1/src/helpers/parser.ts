@@ -15,6 +15,7 @@ export const isCodeExpression = (definition: unknown): definition is CodeExpress
 
 type Parser = (definition: CodeExpression) => {
 	evaluate: (context: unknown) => unknown;
+	dependencies: () => string[];
 };
 
 const expressionRegex = /^(.*)\{\{(.*)\}\}(.*)$/;
@@ -40,6 +41,7 @@ export const parse: Parser = definition => {
 				value: insert.evaluate(context),
 			}) as unknown;
 		},
+		dependencies: insert.dependencies,
 	};
 };
 
@@ -57,6 +59,7 @@ export const parseAccessor: Parser = definition => {
 
 	return {
 		evaluate: context => path.reduce(getProp, context),
+		dependencies: () => [definition],
 	};
 };
 
@@ -81,11 +84,16 @@ export const parseFunction: Parser = definition => {
 				const args = argAccessors.map(a => a.evaluate(context));
 				return (fn as (...args: unknown[]) => unknown)(...args);
 			},
+			dependencies: () => [
+				...baseAccessor.dependencies(),
+				...argAccessors.flatMap(arg => arg.dependencies()),
+			],
 		};
 	}
 	const accessor = parseAccessor(definition);
 	return {
 		evaluate: context => accessor.evaluate(context),
+		dependencies: accessor.dependencies,
 	};
 };
 
@@ -94,6 +102,7 @@ const parseArg: Parser = definition => {
 		const primitiveValue = JSON.parse(definition) as unknown;
 		return {
 			evaluate: () => primitiveValue,
+			dependencies: () => [],
 		};
 	} catch (e) {
 		return parseFunction(definition);
@@ -117,5 +126,6 @@ export const parsePipe: Parser = definition => {
 		evaluate: context => accessors
 			.map(accessor => accessor.evaluate(context))
 			.reduce(pipeValue),
+		dependencies: () => accessors.flatMap(a => a.dependencies()),
 	};
 };

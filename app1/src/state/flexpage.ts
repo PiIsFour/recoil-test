@@ -3,6 +3,8 @@ import { FieldEntity, FieldRepo } from "./entities/field"
 import { DataContextEntity, DataContextRepo } from "./entities/dataContext"
 import { reducer as actionsReducer } from './actions'
 import type { State } from "./state"
+import { codeBehindService } from "../store"
+import { isFpObservable } from "./observable"
 
 const initial: State = {
 	fields: [],
@@ -83,7 +85,7 @@ export const fieldRepo = (state: State): FieldRepoInternal => {
 		},
 		update: entity => {
 			const fields = state.fields.map(f => {
-				if(f.id === entity.id)
+				if(f.id !== entity.id)
 					return f
 				
 				return entity.state
@@ -132,7 +134,27 @@ export const createContext = (state: State) => {
 					}
 				}
 			}
-		}) as unknown
+		}) as unknown,
+		'$properties': new Proxy(state, {
+			has: (state, propName) => {
+				if(typeof propName === 'symbol')
+					return false
+				
+				return codeBehindService.hasProp(propName)
+			},
+			get: (state, propName) => {
+				if(typeof propName === 'symbol')
+					throw new Error(`$properties.${ String(propName) } does not exist`)
+
+				if(!codeBehindService.hasProp(propName))
+					throw new Error(`$properties.${ String(propName) } does not exist`)
+				
+				const prop = codeBehindService.getProp(propName)
+				if(isFpObservable(prop))
+					return prop.read()
+				return prop
+			}
+		}) as unknown,
 	}
 	return context
 }

@@ -2,6 +2,12 @@
 	"folders": [
 		{
 			"path": "app1"
+		},
+		{
+			"path": "vue-playground"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {

@@ -1,17 +1,17 @@
 {
   "name": "vue-playground",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "files": [
     "dist"
   ],
-  "main": "./dist/my-lib.umd.cjs",
-  "module": "./dist/my-lib.js",
+  "main": "./dist/lib.umd.js",
+  "module": "./dist/lib.mjs",
   "types": "./dist/src/lib.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/my-lib.js",
-      "require": "./dist/my-lib.umd.cjs"
+      "import": "./dist/lib.mjs",
+      "require": "./dist/lib.umd.js"
     }
   },
   "scripts": {

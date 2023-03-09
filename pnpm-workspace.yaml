@@ -1,3 +1,4 @@
 packages:
   - app1
   - vue-playground
+  - react-lib

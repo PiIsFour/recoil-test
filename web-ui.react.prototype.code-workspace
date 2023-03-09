@@ -7,6 +7,9 @@
 			"path": "vue-playground"
 		},
 		{
+			"path": "react-lib"
+		},
+		{
 			"path": "."
 		}
 	],

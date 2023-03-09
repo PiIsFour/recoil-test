@@ -8,6 +8,7 @@ import { MockComponent } from './components/MockComponent';
 import { createPage } from './state/actions/createPage';
 
 import xxx from 'vue-playground'
+import { Counter as MyCounter } from 'react-lib'
 import { useEffect, useRef } from 'react';
 
 // add test data
@@ -48,7 +49,7 @@ function App() {
 	const element = useRef<HTMLDivElement | null>(null)
 	useEffect(() => {
 		console.log(element.current)
-		xxx.render(element.current as Element)
+		return xxx.render(element.current as Element)
 	}, [])
 	return (
 		<Provider store={store}>
@@ -60,6 +61,7 @@ function App() {
 					<Counter />
 					<MockComponent />
 					<div ref={element} />
+					<MyCounter />
 				</header>
 			</div>
 		</Provider>

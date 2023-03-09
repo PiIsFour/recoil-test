@@ -6,5 +6,7 @@ export default {
 		const app = createApp(Mine)
 
 		app.mount(root)
+
+		return () => app.unmount()
 	}
 }

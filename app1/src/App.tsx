@@ -7,6 +7,9 @@ import { store } from './store';
 import { MockComponent } from './components/MockComponent';
 import { createPage } from './state/actions/createPage';
 
+import xxx from 'vue-playground'
+import { useEffect, useRef } from 'react';
+
 // add test data
 store.dispatch(createPage({
 	fields: {
@@ -42,6 +45,11 @@ store.dispatch(createPage({
 }))
 
 function App() {
+	const element = useRef<HTMLDivElement | null>(null)
+	useEffect(() => {
+		console.log(element.current)
+		xxx.render(element.current as Element)
+	}, [])
 	return (
 		<Provider store={store}>
 			<div className="App">
@@ -51,6 +59,7 @@ function App() {
 					<Counter />
 					<Counter />
 					<MockComponent />
+					<div ref={element} />
 				</header>
 			</div>
 		</Provider>

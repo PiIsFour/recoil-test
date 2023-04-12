@@ -1,0 +1,19 @@
+{
+  "name": "web-ui.core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup index.ts src/hello.ts --format cjs,esm --dts",
+    "check-types": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5"
+  }
+}

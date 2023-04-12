@@ -7,9 +7,22 @@ import { store } from './store';
 import { MockComponent } from './components/MockComponent';
 import { createPage } from './state/actions/createPage';
 
-import xxx from 'vue-playground'
+import { mine } from 'vue-playground'
 import { Counter as MyCounter } from 'react-lib'
 import { useEffect, useRef } from 'react';
+import { hello } from 'web-ui.core/dist/src/hello'
+
+const wrapVue = (component: {render: (root: Element) => () => void}) =>
+	() => {
+		const element = useRef<HTMLDivElement | null>(null)
+		useEffect(() => {
+			return mine.render(element.current as Element)
+		}, [])
+
+		return <div ref={element} />
+	}
+
+const Mine = wrapVue(mine)
 
 // add test data
 store.dispatch(createPage({
@@ -46,21 +59,17 @@ store.dispatch(createPage({
 }))
 
 function App() {
-	const element = useRef<HTMLDivElement | null>(null)
-	useEffect(() => {
-		console.log(element.current)
-		return xxx.render(element.current as Element)
-	}, [])
 	return (
 		<Provider store={store}>
 			<div className="App">
+				{hello('world')}
 				<header className="App-header">
 					<SimpleCounter />
 					<SimpleCounter />
 					<Counter />
 					<Counter />
 					<MockComponent />
-					<div ref={element} />
+					<Mine />
 					<MyCounter />
 				</header>
 			</div>

@@ -30,6 +30,10 @@ export class ComponentEntity{
 	}
 
 	getField(index: number): FieldEntity {
-		return this.fieldRepo.getById(this.state.fields[index])
+		const id = this.state.fields[index]
+		if(!id)
+			throw new Error('index out of bounds')
+		
+		return this.fieldRepo.getById(id)
 	}
 }

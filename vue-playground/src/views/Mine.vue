@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { computed, reactive, ref } from 'vue'
+	import { add } from 'web-ui.core'
 
 	const state = reactive({
 		name: 'Alice'
@@ -8,7 +9,7 @@
 	const counter = ref(0)
 
 	const inc = () => {
-		counter.value++
+		counter.value = add(counter.value, 1)
 	}
 
 	const a = computed(() => `a: ${ counter.value }`)

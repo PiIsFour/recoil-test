@@ -1,12 +1,14 @@
-import { createApp } from 'vue'
+import { createApp, type Component } from 'vue'
 import Mine from './views/Mine.vue'
 
-export default {
+const wrapComponent = (component: Component) => ({
 	render(root: Element) {
-		const app = createApp(Mine)
+		const app = createApp(component)
 
 		app.mount(root)
 
 		return () => app.unmount()
 	}
-}
+})
+
+export const mine = wrapComponent(Mine)

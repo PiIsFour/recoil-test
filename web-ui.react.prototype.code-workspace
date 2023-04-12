@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "web-ui.core"
+		},
+		{
 			"path": "app1"
 		},
 		{
